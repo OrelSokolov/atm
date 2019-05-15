@@ -1,4 +1,6 @@
 class ATM
+  class NotEnoughMoneyError < Exception; end
+
   ALLOWED_KEYS = [50, 25, 10, 5, 2, 1]
 
   def initialize
@@ -26,11 +28,19 @@ class ATM
 
   # Get money by hash, change balance
   def get_money!(money_hash)
-
+    if enough_money_for?(money_hash)
+      money_hash.keys.each{|key| @money[key] -= money_hash[key]}
+    else
+      raise NotEnoughMoneyError
+    end
   end
 
   # Get money buy integer value, auto select random case
   def auto_get_money!(money_sum)
+    combination = fast_search(money_sum) || br(money_sum).sample
+    raise NotEnoughMoneyError unless combination
+    get_money!(combination)
+    puts combination
   end
 
   # Fast search if we have unlimited money resources
@@ -44,7 +54,7 @@ class ATM
       left = left % key
       break if (left % key).zero?
     end
-    result
+    enough_money_for?(result) ? result : nil
   end
 
   # Check if we have no extra keys in given hash
@@ -66,7 +76,7 @@ class ATM
   def balance
     sum = 0
     @money.each do |k, v|
-      sum += v
+      sum += k*v
     end
     sum
   end
@@ -156,10 +166,8 @@ class ATM
       ranges_to_brute[k] = (mins[k]..maxs[k]).to_a unless @money[k].zero?
     end
 
-    puts ranges_to_brute
-
+    # Sort keys by desc to build matrix then
     sorted_keys = ranges_to_brute.keys.sort{|x, y| ranges_to_brute[x].length <=> ranges_to_brute[y].length}.reverse
-    puts sorted_keys.inspect
 
     results = []
     (0...bruteforce_variants_count(sum)).each do |i|
@@ -180,11 +188,15 @@ end
 b = ATM.new
 # b.put_infinite_money!
 b.put_inside!({ 50 => 20, 25 => 20, 5 => 20, 2 => 20, 1 => 1})
-puts b.balance_hash
-puts b.fast_search(223)
-puts
+puts b.balance
+# puts b.balance_hash
+# puts b.fast_search(223)
+# puts
+#
+# variants =  b.br(223)
+# puts variants
+# puts variants.length
+# puts variants.uniq.length
 
-variants =  b.br(223)
-puts variants
-puts variants.length
-puts variants.uniq.length
+b.auto_get_money!(500)
+puts b.balance
