@@ -1,18 +1,19 @@
-class Bankomat
+class ATM
   ALLOWED_KEYS = [50, 25, 10, 5, 2, 1]
 
   def initialize
     @money = default_hash
   end
 
-  def put_inside(money_hash)
+  # Put money hash inside ATM
+  def put_inside!(money_hash)
     money_hash.each do |k, v|
       @money[k] += v
     end
   end
 
-  # Just for your checks
-  def put_infinite_money
+  # Put a lot of money to ATM
+  def put_infinite_money!
     {50 => 10000,
      25 => 10000,
      10 => 10000,
@@ -23,17 +24,21 @@ class Bankomat
     end
   end
 
-  def get_money(money_hash)
+  # Get money by hash, change balance
+  def get_money!(money_hash)
 
   end
 
-  # Get money with first variant
-  def auto_get_money(money_sum)
+  # Get money buy integer value, auto select random case
+  def auto_get_money!(money_sum)
   end
 
-  def generate_variants_for(money_sum, allowed_keys)
+  # Fast search if we have unlimited money resources
+  # Not usable for edge cases
+  def fast_search(money_sum)
     result = default_hash
     left = money_sum
+    allowed_keys = ALLOWED_KEYS.select{|k| @money[k] > 0}
     allowed_keys.each do |key|
       result[key] = left/key.to_i
       left = left % key
@@ -42,6 +47,7 @@ class Bankomat
     result
   end
 
+  # Check if we have no extra keys in given hash
   def hash_correct?(hash)
     hash.keys.all? { |key| ALLOWED_KEYS.include?(key) }
   end
@@ -51,10 +57,12 @@ class Bankomat
     hash.keys.all?{|key| @money[key] >= hash[key]}
   end
 
+  # Returns balance as hash
   def balance_hash
     @money
   end
 
+  # Returns balance as integer value
   def balance
     sum = 0
     @money.each do |k, v|
@@ -63,6 +71,7 @@ class Bankomat
     sum
   end
 
+  # Returns default money hash initialized with zero values
   def default_hash
     hash = {}
     ALLOWED_KEYS.each do |key|
@@ -136,19 +145,8 @@ class Bankomat
     result
   end
 
-  def bruteforce_variants(sum)
-    results = []
-    mins = min_limits(sum)
-    maxs = max_limits(sum)
-
-    default_hash.keys do |k|
-
-
-    end
-
-    results
-  end
-
+  # Bruteforce with clever limitations
+  # Not usable if we have a lot of money inside
   def br(sum)
     ranges_to_brute = {}
     mins = min_limits(sum)
@@ -179,16 +177,14 @@ class Bankomat
 end
 
 
-b = Bankomat.new
-# b.put_infinite_money
-b.put_inside({ 50 => 20, 25 => 20, 5 => 20, 2 => 20, 1 => 1})
+b = ATM.new
+# b.put_infinite_money!
+b.put_inside!({ 50 => 20, 25 => 20, 5 => 20, 2 => 20, 1 => 1})
 puts b.balance_hash
-# puts b.generate_variants_for(223, Bankomat::ALLOWED_KEYS)
-# puts b.max_limits 225
-# puts b.min_limits 225
-# puts b.bruteforce_variants_count 225
+puts b.fast_search(223)
+puts
 
-variants =  b.br(225)
+variants =  b.br(223)
 puts variants
 puts variants.length
 puts variants.uniq.length
