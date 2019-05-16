@@ -35,7 +35,7 @@ class App < Rack::App
   end
 
   desc 'Add infinite money'
-  post '/add_infinite_money' do
+  put '/put_infinite_money' do
     atm.put_infinite_money!
     balance
   end

@@ -12,9 +12,9 @@ echo
 
 echo "Load infinite money"
 curl --header "Content-Type: application/json" \
-  --request POST \
+  --request PUT \
   --data '{}' \
-    http://localhost:9292/add_infinite_money
+    http://localhost:9292/put_infinite_money
 echo
 
 echo "Empty ATM"
