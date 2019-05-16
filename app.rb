@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'bundler'
 require 'json'
 require_relative 'lib/atm'
@@ -6,13 +8,10 @@ Bundler.require
 Loader.autoload
 
 class App < Rack::App
-
   headers 'Access-Control-Allow-Origin' => '*',
           'Access-Control-Expose-Headers' => 'X-My-Custom-Header, X-Another-Custom-Header'
 
-  serializer do |object|
-    object.to_json
-  end
+  serializer(&:to_json)
 
   desc 'Display current balance as Integer'
   get '/balance' do
@@ -21,17 +20,17 @@ class App < Rack::App
 
   desc 'Get bruteforce balance'
   get '/brute_force' do
-    atm.br(params_hash["sum"].to_i)
+    atm.br(params_hash['sum'].to_i)
   end
 
   desc 'Fast search'
   get '/fast_search' do
-    atm.fast_search(params_hash["sum"].to_i)
+    atm.fast_search(params_hash['sum'].to_i)
   end
 
   desc 'Give money by :sum param'
   post '/give_money' do
-    atm.auto_get_money!(params_hash["sum"].to_i)
+    atm.auto_get_money!(params_hash['sum'].to_i)
   end
 
   desc 'Add infinite money'
@@ -53,12 +52,13 @@ class App < Rack::App
   end
 
   error Exception, StandardError, NoMethodError do |ex|
-    {:error=>ex.message}
+    { error: ex.message }
   end
 
   root '/hello'
 
   private
+
   def atm
     @atm ||= ATM.new(true)
     @atm
@@ -75,5 +75,4 @@ class App < Rack::App
   def params_hash
     JSON.parse(request.env['rack.input'].read).to_h
   end
-
 end
