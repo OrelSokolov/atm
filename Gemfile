@@ -11,3 +11,6 @@ gem 'rubocop'
 group :development do
   gem 'rspec'
 end
+
+gem 'simplecov', require: false, group: :test
+
