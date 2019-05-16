@@ -3,6 +3,7 @@
 require 'redis'
 require 'json'
 
+# This class represents ATM that can calculate combinations to give you money
 class ATM
   class NotEnoughMoneyError < RuntimeError; end
 
@@ -152,11 +153,9 @@ class ATM
 
   # Get money by hash, change balance
   def get_money!(money_hash)
-    if enough_money_for?(money_hash)
-      money_hash.keys.each { |key| @money[key] -= money_hash[key] }
-    else
-      raise NotEnoughMoneyError, 'Not enough money for found combination'
-    end
+    raise NotEnoughMoneyError, 'Not enough money for found combination' unless enough_money_for?(money_hash)
+
+    money_hash.keys.each { |key| @money[key] -= money_hash[key] }
     save!
   end
 

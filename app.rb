@@ -7,6 +7,7 @@ require_relative 'lib/atm'
 Bundler.require
 Loader.autoload
 
+# This is Rack app
 class App < Rack::App
   headers 'Access-Control-Allow-Origin' => '*',
           'Access-Control-Expose-Headers' => 'X-My-Custom-Header, X-Another-Custom-Header'
