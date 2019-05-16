@@ -2,7 +2,12 @@
 
 source "https://rubygems.org"
 
-git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
-
 gem 'redis'
 gem 'rubocop'
+gem 'rack'
+gem 'rack-app', require: 'rack/app'
+gem 'loader'
+
+group :development do
+  gem 'rspec'
+end
